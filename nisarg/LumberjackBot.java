@@ -40,7 +40,7 @@ public class LumberjackBot {
                         if (rc.canShake(t.location)) rc.shake(t.location);
                         if ((t.getTeam() == rc.getTeam().opponent() || t.getTeam() == Team.NEUTRAL) && rc.canChop(t.ID)) {
                             rc.chop(t.ID);
-                            Clock.yield();
+                          //  Clock.yield();
                         }
                     }
                 }
