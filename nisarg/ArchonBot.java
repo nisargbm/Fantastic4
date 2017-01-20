@@ -18,7 +18,7 @@ public class ArchonBot {
     static int LUMBERJACK_CHANNEL = 2;
     static int SOLDIER_CHANNEL=90;
     // Keep important numbers here
-    static int GARDENER_MAX = 10;
+    static int GARDENER_MAX = 2;
     static int LUMBERJACK_MAX = 3;
     static int SCOUT_MAX=2;
     static int SOLDIER_MAX=2;
@@ -41,27 +41,19 @@ public class ArchonBot {
                 // Generate a random direction
                 Direction dir = randomDirection();
                 int prevNumGard = rc.readBroadcast(GARDENER_CHANNEL);
-              //  rc.broadcast(GARDENER_CHANNEL, 0);
                 if (prevNumGard < GARDENER_MAX && rc.canHireGardener(dir)) {
                     rc.hireGardener(dir);
                     rc.broadcast(GARDENER_CHANNEL, prevNumGard + 1);
-                    // Randomly attempt to build a gardener in this direction
-//                if (rc.canHireGardener(dir) && Math.random() < .01) {
-//                    rc.hireGardener(dir);
-//                }
+                   // tryMove(rc.getLocation().directionTo(rc.getInitialArchonLocations(rc.getTeam().opponent())[0]).opposite(), 30, 12);
+                    // Broadcast archon's location for other robots on the team to know
+                    MapLocation myLocation = rc.getLocation();
+                    rc.broadcast(0, (int) myLocation.x);
+                    rc.broadcast(1, (int) myLocation.y);
+//                if(rc.getTeamBullets()>=1000)
+//                    rc.donate(500);
+                    // Clock.yield() makes the robot wait until the next turn, then it will perform this loop again
+                    Clock.yield();
                 }
-                // Move randomly
-                // tryMove(randomDirection());
-                tryMove(rc.getLocation().directionTo(rc.getInitialArchonLocations(rc.getTeam().opponent())[0]).opposite(),30,12);
-                // Broadcast archon's location for other robots on the team to know
-                MapLocation myLocation = rc.getLocation();
-                rc.broadcast(0, (int) myLocation.x);
-                rc.broadcast(1, (int) myLocation.y);
-                if(rc.getTeamBullets()>=1000)
-                    rc.donate(500);
-                // Clock.yield() makes the robot wait until the next turn, then it will perform this loop again
-                Clock.yield();
-
             } catch(Exception e){
                 System.out.println("Archon Exception");
                 e.printStackTrace();

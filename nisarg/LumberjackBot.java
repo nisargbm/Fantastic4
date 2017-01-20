@@ -22,34 +22,42 @@ public class LumberjackBot {
                         rc.senseNearbyRobots(-1, rc.getTeam().opponent()).length > 0)
                     rc.broadcast(LUMBERJACK_CHANNEL, rc.readBroadcast(LUMBERJACK_CHANNEL) - 1);
                 dodge();
-                RobotInfo[] bots = rc.senseNearbyRobots();
-                for (RobotInfo b : bots) {
-                    if (b.getTeam() != rc.getTeam() && rc.canStrike()) {
-                        rc.strike();
-                        Direction chase = rc.getLocation().directionTo(b.getLocation());
-                        tryMove(chase);
-                        break;
+                RobotInfo[] bots = rc.senseNearbyRobots(-1,rc.getTeam().opponent());
+                if(bots.length>0) {
+                    for (RobotInfo b : bots) {
+                        if (b.getTeam() != rc.getTeam() && rc.canStrike()) {
+                            rc.strike();
+                            Direction chase = rc.getLocation().directionTo(b.getLocation());
+                            tryMove(chase);
+                            break;
+                        }
                     }
                 }
                 TreeInfo[] trees = rc.senseNearbyTrees();
-                for (TreeInfo t : trees) {
-                    if(rc.canShake(t.location)) rc.shake(t.location);
-                    if ((t.getTeam()==rc.getTeam().opponent() || t.getTeam()==Team.NEUTRAL) && rc.canChop(t.getLocation())) {
-                        rc.chop(t.getLocation());
-                        break;
+                if(trees.length>0) {
+                    for (TreeInfo t : trees) {
+                       // tryMove(rc.getLocation().directionTo(t.location));
+                        if (rc.canShake(t.location)) rc.shake(t.location);
+                        if ((t.getTeam() == rc.getTeam().opponent() || t.getTeam() == Team.NEUTRAL) && rc.canChop(t.ID)) {
+                            rc.chop(t.ID);
+                            Clock.yield();
+                        }
                     }
                 }
-                if (! rc.hasAttacked()) {
-                   // wander();
-                    if(prevGardNum>=GARDENER_MAX) {
-                        if (rc.getLocation().isWithinDistance(archonLoc, 8f)) {
-                            tryMove(rc.getLocation().directionTo(archonLoc).opposite(), 60, 6);
-                        } else if (rc.getLocation().isWithinDistance(archonLoc, 20f) && !rc.getLocation().isWithinDistance(archonLoc, 8f)) {
-                            tryMove(randomDirection());
-                        } else
-                            tryMove(rc.getLocation().directionTo(archonLoc), 60, 6);
-                    }
-                }
+                else
+                tryMove(randomDirection(),60,6);
+//                if (! rc.hasAttacked()) {
+//                   // wander();
+//                    if(prevGardNum>=GARDENER_MAX) {
+//                        if (rc.getLocation().isWithinDistance(archonLoc, 15f)) {
+//                            tryMove(rc.getLocation().directionTo(archonLoc).opposite(), 60, 6);
+//                        }
+//                        } else if (rc.getLocation().isWithinDistance(archonLoc, 20f) && !rc.getLocation().isWithinDistance(archonLoc, 8f)) {
+//                            tryMove(randomDirection());
+//                        } else
+//                            tryMove(rc.getLocation().directionTo(archonLoc), 60, 6);
+ //                   }
+  //              }
                 Clock.yield();
             } catch (Exception e) {
                 e.printStackTrace();
