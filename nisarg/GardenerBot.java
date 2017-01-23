@@ -15,12 +15,15 @@ public class GardenerBot {
 	static Direction[] directions={Direction.getEast(),Direction.getNorth(),Direction.getWest(),Direction.getSouth()};
 	static void runGardener() throws GameActionException {
 		System.out.println("I'm a gardener!");
-
+    int prevScoutNum=0;
+    int  prevNumLum=0;
+    int prevNumSol=0;
 		// The code you want your robot to perform every round should be in this loop
 		while (true) {
 
 			// Try/catch blocks stop unhandled exceptions, which cause your robot to explode
 			try {
+
 				if (rc.getHealth() < RobotType.GARDENER.maxHealth / 10 &&
 						rc.senseNearbyRobots(-1, rc.getTeam().opponent()).length > 0)
 					rc.broadcast(GARDENER_CHANNEL, rc.readBroadcast(GARDENER_CHANNEL) - 1);
@@ -35,10 +38,9 @@ public class GardenerBot {
 				// Generate a random direction
 				Direction dir = randomDirection();
 				int prev = rc.readBroadcast(GARDENER_CHANNEL);
-                int scoutCount = rc.readBroadcast(SCOUT_CHANNEL);
-			  int  prevNumGard = rc.readBroadcast(LUMBERJACK_CHANNEL);
-                int prevScoutNum=rc.readBroadcast(SCOUT_CHANNEL);
-				 int prevNumSol = rc.readBroadcast(SOLDIER_CHANNEL);
+                prevNumLum = rc.readBroadcast(LUMBERJACK_CHANNEL);
+                 prevScoutNum=rc.readBroadcast(SCOUT_CHANNEL);
+				 prevNumSol = rc.readBroadcast(SOLDIER_CHANNEL);
 				//rc.broadcast(GARDENER_CHANNEL, prev+1);
 				TreeInfo[] trees = rc.senseNearbyTrees(1.5f);
 				//  Direction dir = randomDirection();
@@ -56,10 +58,42 @@ public class GardenerBot {
           //  tryMove(rc.getLocation().directionTo(rc.getInitialArchonLocations(rc.getTeam().opponent())[0]),60,6);
           //  rc.setIndicatorLine(rc.getLocation(),rc.getInitialArchonLocations(rc.getTeam().opponent())[0],rc.getID(),2,3);
 
+
+//				if (prevScoutNum <= SCOUT_MAX) {
+//				if(rc.canBuildRobot(RobotType.SCOUT,dir)){
+//				    rc.buildRobot(RobotType.SCOUT,dir);
+//                }
+//                else{
+//
+//                }
+//
+//                }
+//
+//                if(prevScoutNum>SCOUT_MAX && prevNumSol<=SOLDIER_MAX){
+//				    while(!rc.canBuildRobot(rc.getType().SOLDIER,dir)){
+//				        dir.rotateLeftDegrees(45);
+//                    }
+//                    rc.buildRobot(rc.getType().SOLDIER,dir);
+//				    rc.broadcast(SOLDIER_CHANNEL,prevNumSol);
+//                }
+
+
+//				while (prevNumSol <= SOLDIER_MAX) {
+//					if (rc.canBuildRobot(RobotType.SOLDIER, dir)) {
+//						rc.broadcast(SOLDIER_CHANNEL, prevNumSol + 1);
+//						prevNumSol=rc.readBroadcast(SOLDIER_CHANNEL);
+//						rc.buildRobot(RobotType.SOLDIER, dir);
+//						dir.rotateLeftDegrees(60);
+//						Clock.yield();
+//					}
+//					else dir.rotateLeftDegrees(60);
+//				}
+
+//
 //				if (rc.getLocation().isWithinDistance(archonLoc, 6)) //&& rc.getLocation().isWithinDistance(rc.senseNearbyRobots(1.5f,rc.getTeam())[0].location,1.5f))
 //				{  while (rc.getLocation().isWithinDistance(archonLoc, 6))// && rc.getLocation().isWithinDistance(rc.senseNearbyRobots(1.5f,rc.getTeam())[0].location,1.5f))
 //				{  if (!rc.hasMoved()) {
-//							tryMove(rc.getLocation().directionTo(rc.getInitialArchonLocations(rc.getTeam().opponent())[0]), 15, 24);
+//							tryMove(randomDirection()/*rc.getLocation().directionTo(rc.getInitialArchonLocations(rc.getTeam().opponent())[0])*/, 15, 24);
 //				}
 //					}
 //				}
@@ -79,47 +113,28 @@ public class GardenerBot {
 
 
 
-                 //   while (prevScoutNum <= SCOUT_MAX) {
-//                        if (rc.canBuildRobot(rc.getType().SCOUT, dir)) {
-//                            rc.broadcast(SCOUT_CHANNEL, prevScoutNum + 1);
-//                            rc.buildRobot(rc.getType().SCOUT, dir);
-//                            dir.rotateLeftDegrees(60);
-//                            prevScoutNum=rc.readBroadcast(SCOUT_CHANNEL);
-//                           // break;
-//                            //Clock.yield();
-//                        }
-//                        else dir.rotateLeftDegrees(60);
-//               //   }
+
 
 
 
 
                //     while (prevNumGard <= LUMBERJACK_MAX) {
-                        if (rc.canBuildRobot(RobotType.LUMBERJACK, dir)) {
-                            rc.broadcast(LUMBERJACK_CHANNEL, prevNumGard + 1);
-                            rc.buildRobot(RobotType.LUMBERJACK, dir);
-                            dir.rotateLeftDegrees(60);
-                            prevNumGard=rc.readBroadcast(LUMBERJACK_CHANNEL);
-                            //Clock.yield();
-							//break;
-                        }
-                        else
-                        dir.rotateLeftDegrees(60);
+//                        if (rc.canBuildRobot(RobotType.LUMBERJACK, dir)) {
+//                            rc.broadcast(LUMBERJACK_CHANNEL, prevNumGard + 1);
+//                            rc.buildRobot(RobotType.LUMBERJACK, dir);
+//                            dir.rotateLeftDegrees(60);
+//                            prevNumGard=rc.readBroadcast(LUMBERJACK_CHANNEL);
+//                            //Clock.yield();
+//							//break;
+//                        }
+//                        else
+//                        dir.rotateLeftDegrees(60);
                //     }
 
 
 
 
-//                while (prevNumSol <= SOLDIER_MAX) {
-//                    if (rc.canBuildRobot(RobotType.SOLDIER, dir)) {
-//                        rc.broadcast(SOLDIER_CHANNEL, prevNumSol + 1);
-//                        prevNumSol=rc.readBroadcast(SOLDIER_CHANNEL);
-//                        rc.buildRobot(RobotType.SOLDIER, dir);
-//                        dir.rotateLeftDegrees(30);
-//                        Clock.yield();
-//                    }
-//                    dir.rotateLeftDegrees(30);
-//                }
+
 
 
 
@@ -140,9 +155,13 @@ public class GardenerBot {
 //							i++;
 //						}
 //					}
+//
+////                    }
+//                tryPlant(dir,30,12);
+//
 
-
-//                    }
+                if(prevScoutNum<=SCOUT_MAX && trySpawn(dir,30,12,RobotType.SCOUT))rc.broadcast(SCOUT_CHANNEL,prevScoutNum+1);
+				else if(prevNumSol<=SOLDIER_MAX && trySpawn(dir,30,12,RobotType.SOLDIER))rc.broadcast(SOLDIER_CHANNEL,prevNumSol+1);
 			    Clock.yield();
 			} catch(Exception e) {
 				System.out.println("Gardener Exception");
@@ -165,4 +184,20 @@ public class GardenerBot {
 		// A move never happened, so return false.
 		return false;
 	}
+    static boolean trySpawn(Direction dir, float degreeOffset, int checksPerSide,RobotType robotType) throws GameActionException {
+        int currentCheck = 1;
+        while(currentCheck<=checksPerSide) {
+            // Try the offset of the left side
+            if(rc.canBuildRobot(robotType,dir))
+            {
+                rc.buildRobot(robotType,dir);
+
+                return true;
+            }
+            dir.rotateLeftDegrees(degreeOffset*currentCheck);
+            currentCheck++;
+        }
+        // A move never happened, so return false.
+        return false;
+    }
 }

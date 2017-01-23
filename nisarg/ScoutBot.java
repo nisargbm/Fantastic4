@@ -2,6 +2,8 @@ package nisarg;
 
 import battlecode.common.*;
 
+import java.util.*;
+
 import static nisarg.ArchonBot.*;
 import static nisarg.RobotPlayer.*;
 
@@ -9,20 +11,17 @@ import static nisarg.RobotPlayer.*;
  * Created by nisar on 17-01-2017.
  */
 public class ScoutBot {
-
     public static void runScout() {
         System.out.println("I'm a scout!");
-
-        // Team enemy = rc.getTeam().opponent();
-        TreeInfo[] trees;
+       TreeInfo[] trees;
+       ArrayList<TreeInfo> treeInfos =new ArrayList<TreeInfo>();
         int i=0;
         // The code you want your robot to perform every round should be in this loop
         while (true) {
-
             // Try/catch blocks stop unhandled exceptions, which cause your robot to explode
             try {
 //                rc.move(randomDirection());
-
+                trees=rc.senseNearbyTrees();
                 if (rc.getHealth() < RobotType.SCOUT.maxHealth / 10 &&
                         rc.senseNearbyRobots(-1, rc.getTeam().opponent()).length > 0)
                     rc.broadcast(SCOUT_CHANNEL, rc.readBroadcast(SCOUT_CHANNEL) - 1);
@@ -32,7 +31,7 @@ public class ScoutBot {
                 int xPosEnemy = rc.readBroadcast(10);
                 int yPosEnemy = rc.readBroadcast(11);
                 int scoutCount = rc.readBroadcast(SCOUT_CHANNEL);
-                trees=rc.senseNearbyTrees(-1,rc.getTeam().opponent());
+               // trees=rc.senseNearbyTrees(-1,rc.getTeam().opponent());
                 MapLocation enemy = new MapLocation(xPosEnemy, yPosEnemy);
                 RobotInfo[] bots = rc.senseNearbyRobots(-1, rc.getTeam().opponent());
                 dodge();
@@ -44,15 +43,23 @@ public class ScoutBot {
                     if(trees.length>0)
                     {
                         for(TreeInfo tree:trees){
-                            if(tree.getContainedRobot()!=null)
-                            {
-                                tryMove(rc.getLocation().directionTo(tree.location),60,6);
-
-                            if(tree.getContainedBullets()==0 && rc.canShake(tree.ID)){ rc.shake(tree.ID);Clock.yield();}
+                            rc.setIndicatorDot(tree.getLocation(),1,2,3);
+                            if(!findTree(tree,treeInfos)) {
+                                tryMove(rc.getLocation().directionTo(tree.getLocation()),60,6);
+                                treeInfos.add(tree);
+                                if (rc.canShake(tree.ID)) {
+                                    rc.shake(tree.ID);
+                                }
+                            }
+                            Clock.yield();
                         }
-                        }
-                        tryMove(randomDirection());
                     }
+//                    else if(rc.canMove(Direction.getNorth()))
+//                        rc.move(Direction.getNorth());
+//                    else if(rc.canMove(Direction.getEast()))  rc.move(Direction.getEast());
+//                    else if(rc.canMove(Direction.getSouth()))  rc.move(Direction.getSouth());
+//                    else if(rc.canMove(Direction.getWest()))  rc.move(Direction.getWest());
+                    else tryMove(randomDirection(),60,6);
 //                    if (trees.length > 0) {
 //                        for (TreeInfo tree : trees) {
 //                            // bots = rc.senseNearbyRobots(-1, rc.getTeam().opponent());
@@ -108,6 +115,17 @@ public class ScoutBot {
             }
         }
     }
+
+    private static boolean findTree(TreeInfo tree, ArrayList<TreeInfo> treeInfos) {
+        if(treeInfos.size()==0)return false;
+        else {
+            for (int i = 0; i < treeInfos.size(); i++) {
+                if (tree.getID() == treeInfos.get(i).getID()) return true;
+            }
+        }
+        return false;
+    }
+
 }
 
 

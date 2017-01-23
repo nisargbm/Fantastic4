@@ -20,8 +20,8 @@ public class ArchonBot {
     // Keep important numbers here
     static int GARDENER_MAX = 2;
     static int LUMBERJACK_MAX = 3;
-    static int SCOUT_MAX=2;
-    static int SOLDIER_MAX=2;
+    static int SCOUT_MAX=3;
+    static int SOLDIER_MAX=10;
     static int numGard=0;
     //neutral tree channel
     static int NEUTRAL_TREE_X_CHANNEL=99;
