@@ -39,27 +39,46 @@ public class ScoutBot {
 //                    tryMove(rc.getLocation().directionTo(rc.getInitialArchonLocations(rc.getTeam().opponent())[0]));
 //                }
 //                else{
-                    trees = rc.senseNearbyTrees();
-                    if(trees.length>0)
-                    {
-                        for(TreeInfo tree:trees){
-                            rc.setIndicatorDot(tree.getLocation(),1,2,3);
-                            if(!findTree(tree,treeInfos)) {
-                                tryMove(rc.getLocation().directionTo(tree.getLocation()),60,6);
-                                treeInfos.add(tree);
-                                if (rc.canShake(tree.ID)) {
-                                    rc.shake(tree.ID);
-                                }
-                            }
-                            Clock.yield();
+                    trees = rc.senseNearbyTrees(-1,Team.NEUTRAL);
+                    if(bots.length>0)
+                    {   for(RobotInfo bot:bots) {
+                        if (rc.getLocation().isWithinSensorRadius(bot) && rc.canFireSingleShot() && bot.getType() != RobotType.ARCHON) {
+                            // ...Then fire a bullet in the direction of the enemy.
+                            rc.fireSingleShot(rc.getLocation().directionTo(bot.location));
+                            tryMove(randomDirection(),45,4);
+                            break;
                         }
+                        tryMove(randomDirection(),60,6);
+                    }
+                        }
+                   else if(trees.length>0 && trees[0].containedBullets!=0)
+                    {
+//                        if(trees[0].containedBullets!=0)
+//                        {
+                            tryMove(rc.getLocation().directionTo(trees[0].location));
+                            rc.setIndicatorDot(trees[0].getLocation(),1,1,2);
+                            if(rc.canShake(trees[0].ID)){
+                                rc.shake(trees[0].ID);
+                            }
+                       // }
+//                        for(TreeInfo tree:trees){
+//                            rc.setIndicatorDot(tree.getLocation(),1,2,3);
+//                            if(!findTree(tree,treeInfos)) {
+//                                tryMove(rc.getLocation().directionTo(tree.getLocation()),60,6);
+//                                treeInfos.add(tree);
+//                                if (rc.canShake(tree.ID)) {
+//                                    rc.shake(tree.ID);
+//                                }
+//                            }
+//                            Clock.yield();
+//                        }
                     }
 //                    else if(rc.canMove(Direction.getNorth()))
 //                        rc.move(Direction.getNorth());
 //                    else if(rc.canMove(Direction.getEast()))  rc.move(Direction.getEast());
 //                    else if(rc.canMove(Direction.getSouth()))  rc.move(Direction.getSouth());
 //                    else if(rc.canMove(Direction.getWest()))  rc.move(Direction.getWest());
-                    else tryMove(randomDirection(),60,6);
+                    else tryMove(randomDirection(),45,4);
 //                    if (trees.length > 0) {
 //                        for (TreeInfo tree : trees) {
 //                            // bots = rc.senseNearbyRobots(-1, rc.getTeam().opponent());

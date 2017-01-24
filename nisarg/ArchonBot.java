@@ -19,9 +19,9 @@ public class ArchonBot {
     static int SOLDIER_CHANNEL=90;
     // Keep important numbers here
     static int GARDENER_MAX = 2;
-    static int LUMBERJACK_MAX = 3;
-    static int SCOUT_MAX=3;
-    static int SOLDIER_MAX=10;
+    static int LUMBERJACK_MAX = 1;
+    static int SCOUT_MAX=1;
+    static int SOLDIER_MAX=1;
     static int numGard=0;
     //neutral tree channel
     static int NEUTRAL_TREE_X_CHANNEL=99;
@@ -49,8 +49,8 @@ public class ArchonBot {
                     MapLocation myLocation = rc.getLocation();
                     rc.broadcast(0, (int) myLocation.x);
                     rc.broadcast(1, (int) myLocation.y);
-//                if(rc.getTeamBullets()>=1000)
-//                    rc.donate(500);
+                if(rc.getTeamBullets()>=10000)
+                    rc.donate(9000);
                     // Clock.yield() makes the robot wait until the next turn, then it will perform this loop again
                     Clock.yield();
                 }

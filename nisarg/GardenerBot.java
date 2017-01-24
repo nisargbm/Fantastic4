@@ -34,7 +34,6 @@ public class GardenerBot {
 				int xPos = rc.readBroadcast(0);
 				int yPos = rc.readBroadcast(1);
 				MapLocation archonLoc = new MapLocation(xPos, yPos);
-
 				// Generate a random direction
 				Direction dir = randomDirection();
 				int prev = rc.readBroadcast(GARDENER_CHANNEL);
@@ -42,7 +41,9 @@ public class GardenerBot {
                  prevScoutNum=rc.readBroadcast(SCOUT_CHANNEL);
 				 prevNumSol = rc.readBroadcast(SOLDIER_CHANNEL);
 				//rc.broadcast(GARDENER_CHANNEL, prev+1);
-				TreeInfo[] trees = rc.senseNearbyTrees(1.5f);
+				TreeInfo[] trees = rc.senseNearbyTrees(-1,Team.NEUTRAL);
+				TreeInfo[] myTrees=rc.senseNearbyTrees(-1,rc.getTeam());
+				RobotInfo[] bots= rc.senseNearbyRobots(2f);
 				//  Direction dir = randomDirection();
 		 //       Direction dir1 = rc.getLocation().directionTo(rc.getInitialArchonLocations(rc.getTeam())[0]);
 //                if(rc.getLocation().isWithinDistance(archonLoc,6)){
@@ -55,89 +56,6 @@ public class GardenerBot {
 //                            tryMove(rc.getLocation().directionTo(archonLoc).rotateRightDegrees(90));
 //                }
 
-          //  tryMove(rc.getLocation().directionTo(rc.getInitialArchonLocations(rc.getTeam().opponent())[0]),60,6);
-          //  rc.setIndicatorLine(rc.getLocation(),rc.getInitialArchonLocations(rc.getTeam().opponent())[0],rc.getID(),2,3);
-
-
-//				if (prevScoutNum <= SCOUT_MAX) {
-//				if(rc.canBuildRobot(RobotType.SCOUT,dir)){
-//				    rc.buildRobot(RobotType.SCOUT,dir);
-//                }
-//                else{
-//
-//                }
-//
-//                }
-//
-//                if(prevScoutNum>SCOUT_MAX && prevNumSol<=SOLDIER_MAX){
-//				    while(!rc.canBuildRobot(rc.getType().SOLDIER,dir)){
-//				        dir.rotateLeftDegrees(45);
-//                    }
-//                    rc.buildRobot(rc.getType().SOLDIER,dir);
-//				    rc.broadcast(SOLDIER_CHANNEL,prevNumSol);
-//                }
-
-
-//				while (prevNumSol <= SOLDIER_MAX) {
-//					if (rc.canBuildRobot(RobotType.SOLDIER, dir)) {
-//						rc.broadcast(SOLDIER_CHANNEL, prevNumSol + 1);
-//						prevNumSol=rc.readBroadcast(SOLDIER_CHANNEL);
-//						rc.buildRobot(RobotType.SOLDIER, dir);
-//						dir.rotateLeftDegrees(60);
-//						Clock.yield();
-//					}
-//					else dir.rotateLeftDegrees(60);
-//				}
-
-//
-//				if (rc.getLocation().isWithinDistance(archonLoc, 6)) //&& rc.getLocation().isWithinDistance(rc.senseNearbyRobots(1.5f,rc.getTeam())[0].location,1.5f))
-//				{  while (rc.getLocation().isWithinDistance(archonLoc, 6))// && rc.getLocation().isWithinDistance(rc.senseNearbyRobots(1.5f,rc.getTeam())[0].location,1.5f))
-//				{  if (!rc.hasMoved()) {
-//							tryMove(randomDirection()/*rc.getLocation().directionTo(rc.getInitialArchonLocations(rc.getTeam().opponent())[0])*/, 15, 24);
-//				}
-//					}
-//				}
-
-
-
-//                if (prev >= GARDENER_MAX)
-//                {
-//                  if (rc.canBuildRobot(rc.getType().SCOUT, rc.getLocation().directionTo(archonLoc).opposite().rotateRightDegrees(10))
-//                            && scoutCount<SCOUT_MAX) {
-//                        scoutCount++;
-//                        rc.broadcast(SCOUT_CHANNEL,scoutCount);
-//                        rc.buildRobot(rc.getType().SCOUT, rc.getLocation().directionTo(archonLoc).opposite().rotateRightDegrees(10));
-//                      dir.rotateLeftDegrees(10);
-//                      Clock.yield();
-//                    }
-
-
-
-
-
-
-
-
-               //     while (prevNumGard <= LUMBERJACK_MAX) {
-//                        if (rc.canBuildRobot(RobotType.LUMBERJACK, dir)) {
-//                            rc.broadcast(LUMBERJACK_CHANNEL, prevNumGard + 1);
-//                            rc.buildRobot(RobotType.LUMBERJACK, dir);
-//                            dir.rotateLeftDegrees(60);
-//                            prevNumGard=rc.readBroadcast(LUMBERJACK_CHANNEL);
-//                            //Clock.yield();
-//							//break;
-//                        }
-//                        else
-//                        dir.rotateLeftDegrees(60);
-               //     }
-
-
-
-
-
-
-
-
 
 //				for (int j = 0; j < 180; j++) {
 //			if (rc.canPlantTree(dir)) {
@@ -147,21 +65,48 @@ public class GardenerBot {
 //					dir.rotateLeftDegrees(2);
 //					j++;
 //				}
-//					if (trees.length > 0) {
-//						while (i < trees.length) {
-//							if (rc.canShake()) rc.shake(trees[i].ID);
-//							if (trees[i].getTeam()==rc.getTeam() && rc.canWater(trees[i].ID)) rc.water(trees[i].ID);
-//							Clock.yield();
-//							i++;
-//						}
-//					}
+
 //
 ////                    }
 //                tryPlant(dir,30,12);
 //
+				if(rc.getRoundNum()<600) {
 
-                if(prevScoutNum<=SCOUT_MAX && trySpawn(dir,30,12,RobotType.SCOUT))rc.broadcast(SCOUT_CHANNEL,prevScoutNum+1);
-				else if(prevNumSol<=SOLDIER_MAX && trySpawn(dir,30,12,RobotType.SOLDIER))rc.broadcast(SOLDIER_CHANNEL,prevNumSol+1);
+					 if (prevNumLum <= LUMBERJACK_MAX)
+                    { if (trySpawn(dir, 30, 12, RobotType.LUMBERJACK))
+						rc.broadcast(LUMBERJACK_CHANNEL, prevNumLum + 1);
+                    }
+                    else if (prevScoutNum <= SCOUT_MAX){
+                        if( trySpawn(dir, 30, 12, RobotType.SCOUT))
+                        {rc.broadcast(SCOUT_CHANNEL, prevScoutNum + 1);
+                        }
+                    }
+				}
+//				else if(trees.length==0) {
+//					tryPlant(randomDirection(), 60, 6);
+//
+//				}
+				else
+					{
+					if(prevNumSol<=SOLDIER_MAX && trySpawn(dir,30,12,RobotType.SOLDIER))rc.broadcast(SOLDIER_CHANNEL,prevNumSol+1);
+					else if (prevNumLum <= LUMBERJACK_MAX && trySpawn(dir, 30, 12, RobotType.LUMBERJACK))
+						rc.broadcast(LUMBERJACK_CHANNEL, prevNumLum + 1);
+					else {
+						if (trees.length == 0 && bots.length==0 ) {
+							tryPlant(dir, 60, 5);
+							if (myTrees.length > 0) {
+								while (i < myTrees.length) {
+									if (rc.canShake()) rc.shake(myTrees[i].ID);
+									if (myTrees[i].getTeam() == rc.getTeam() && rc.canWater(myTrees[i].ID))
+										rc.water(myTrees[i].ID);
+									Clock.yield();
+									i++;
+								}
+							}
+						}
+						else tryMove(randomDirection(),60,6);
+					}
+				}
 			    Clock.yield();
 			} catch(Exception e) {
 				System.out.println("Gardener Exception");

@@ -62,6 +62,7 @@ public class SoldierBot {
 //                                rc.fireSingleShot(rc.getLocation().directionTo(archonLoc));
                     else if (robots.length > 0)
                         tryMove(rc.getLocation().directionTo(robots[0].getLocation()));
+                    else tryMove(rc.getLocation().directionTo(archonLoc),60,6);
                 }
 
                 // Move randomly

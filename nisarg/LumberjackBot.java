@@ -23,29 +23,30 @@ public class LumberjackBot {
                     rc.broadcast(LUMBERJACK_CHANNEL, rc.readBroadcast(LUMBERJACK_CHANNEL) - 1);
                 dodge();
                 RobotInfo[] bots = rc.senseNearbyRobots(-1,rc.getTeam().opponent());
+                TreeInfo[] trees = rc.senseNearbyTrees();
                 if(bots.length>0) {
                     for (RobotInfo b : bots) {
-                        if (b.getTeam() != rc.getTeam() && rc.canStrike()) {
+                        if (b.getTeam() != rc.getTeam() && b.getType()!=RobotType.ARCHON && rc.canStrike()) {
                             rc.strike();
                             Direction chase = rc.getLocation().directionTo(b.getLocation());
-                            tryMove(chase);
+                            tryMove(chase,60,6);
                             break;
                         }
                     }
                 }
-                TreeInfo[] trees = rc.senseNearbyTrees();
-                if(trees.length>0) {
-                    for (TreeInfo t : trees) {
-                       // tryMove(rc.getLocation().directionTo(t.location));
-                        if (rc.canShake(t.location)) rc.shake(t.location);
-                        if ((t.getTeam() == rc.getTeam().opponent() || t.getTeam() == Team.NEUTRAL) && rc.canChop(t.ID)) {
-                            rc.chop(t.ID);
-                          //  Clock.yield();
-                        }
+                    else if (trees.length > 0) {
+                      //  for (TreeInfo t : trees) {
+                             tryMove(rc.getLocation().directionTo(trees[0].location));
+                            if (rc.canShake(trees[0].ID)) rc.shake(trees[0].ID);
+                            if ((trees[0].getTeam()== rc.getTeam().opponent() || trees[0].getTeam()==Team.NEUTRAL) && rc.canChop(trees[0].ID)) {
+                                rc.chop(trees[0].ID);
+                                //  Clock.yield();
+                            }
+                       // }
                     }
+                    else{
+                tryMove(randomDirection(), 60, 6);
                 }
-                else
-                tryMove(randomDirection(),60,6);
 //                if (! rc.hasAttacked()) {
 //                   // wander();
 //                    if(prevGardNum>=GARDENER_MAX) {
@@ -56,8 +57,8 @@ public class LumberjackBot {
 //                            tryMove(randomDirection());
 //                        } else
 //                            tryMove(rc.getLocation().directionTo(archonLoc), 60, 6);
- //                   }
-  //              }
+                    //                   }
+                    //              }}
                 Clock.yield();
             } catch (Exception e) {
                 e.printStackTrace();
