@@ -18,10 +18,10 @@ public class ArchonBot {
     static int LUMBERJACK_CHANNEL = 2;
     static int SOLDIER_CHANNEL=90;
     // Keep important numbers here
-    static int GARDENER_MAX = 2;
-    static int LUMBERJACK_MAX = 1;
+    static int GARDENER_MAX = 3;
+    static int LUMBERJACK_MAX = 12;
     static int SCOUT_MAX=1;
-    static int SOLDIER_MAX=1;
+    static int SOLDIER_MAX=15;
     static int numGard=0;
     //neutral tree channel
     static int NEUTRAL_TREE_X_CHANNEL=99;
@@ -29,6 +29,9 @@ public class ArchonBot {
     //Scout Loc Broadcast
     static int XPOS_SCOUT_CHANNEL=97;
     static int YPOS_SCOUT_CHANNEL=96;
+
+    static int ARCHON_X=0;
+    static int ARCHON_Y=1;
     static void runArchon() throws GameActionException {
         System.out.println("I'm an archon!");
 
@@ -41,19 +44,17 @@ public class ArchonBot {
                 // Generate a random direction
                 Direction dir = randomDirection();
                 int prevNumGard = rc.readBroadcast(GARDENER_CHANNEL);
-                if (prevNumGard < GARDENER_MAX && rc.canHireGardener(dir)) {
+                rc.broadcast(ARCHON_X,(int)rc.getLocation().x);
+                rc.broadcast(ARCHON_Y,(int)rc.getLocation().x);
+                if (prevNumGard <= GARDENER_MAX && rc.canHireGardener(dir)) {
                     rc.hireGardener(dir);
                     rc.broadcast(GARDENER_CHANNEL, prevNumGard + 1);
-                   // tryMove(rc.getLocation().directionTo(rc.getInitialArchonLocations(rc.getTeam().opponent())[0]).opposite(), 30, 12);
+                    // tryMove(rc.getLocation().directionTo(rc.getInitialArchonLocations(rc.getTeam().opponent())[0]).opposite(), 30, 12);
                     // Broadcast archon's location for other robots on the team to know
-                    MapLocation myLocation = rc.getLocation();
-                    rc.broadcast(0, (int) myLocation.x);
-                    rc.broadcast(1, (int) myLocation.y);
-                if(rc.getTeamBullets()>=10000)
-                    rc.donate(9000);
-                    // Clock.yield() makes the robot wait until the next turn, then it will perform this loop again
-                    Clock.yield();
                 }
+                else
+                    rc.move(randomDirection());
+                Clock.yield();
             } catch(Exception e){
                 System.out.println("Archon Exception");
                 e.printStackTrace();
