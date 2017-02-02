@@ -28,41 +28,42 @@ public class SoldierBot {
                 MapLocation archonLoc = new MapLocation(xPos, yPos);
                 MapLocation enemy2 = new MapLocation(xPos - RobotType.LUMBERJACK.bodyRadius - RobotType.LUMBERJACK.strideRadius, yPos - RobotType.LUMBERJACK.bodyRadius - RobotType.LUMBERJACK.strideRadius);
                 int prevNumSol = rc.readBroadcast(nisarg.ArchonBot.SOLDIER_CHANNEL);
+                int i=0;
                 RobotInfo[] robots = rc.senseNearbyRobots(-1, enemy);
                 // if(rc.readBroadcast(10)!=0 && rc.readBroadcast(11)!=0) {
 
                 // See if there are any nearby enemy robots
 
                 // If there are some...
-                if (robots.length > 0) {
+
+
+
+                if (robots.length > 0 && i < robots.length) {
                     // And we have enough bullets, and haven't attacked yet this turn...
                     // rc.broadcast(10, (int) robots[0].getLocation().x);
                     // rc.broadcast(11, (int) robots[0].getLocation().y);
-                    if(rc.getLocation().isWithinStrideDistance(robots[0]) && rc.canFirePentadShot()) {
-                     rc.firePentadShot(rc.getLocation().directionTo(robots[0].location));
+                    dodge();
+                    if(rc.getLocation().isWithinStrideDistance(robots[i]) && rc.canFirePentadShot()) {
+                     rc.firePentadShot(rc.getLocation().directionTo(robots[i].location));
                     }
-                    else if(rc.getLocation().isWithinSensorRadius(robots[0]) && rc.canFireTriadShot()){
-                        rc.fireTriadShot(rc.getLocation().directionTo(robots[0].location));
+                    else if(rc.getLocation().isWithinSensorRadius(robots[i]) && rc.canFireTriadShot()){
+                        rc.fireTriadShot(rc.getLocation().directionTo(robots[i].location));
                     }
                     else if (rc.canFireSingleShot()) {
                         // ...Then fire a bullet in the direction of the enemy.
-                        rc.fireSingleShot(rc.getLocation().directionTo(robots[0].location));
+                        rc.fireSingleShot(rc.getLocation().directionTo(robots[i].location));
                     }
-                    tryMove(rc.getLocation().directionTo(robots[0].location));
+                    tryMove(rc.getLocation().directionTo(robots[i].location));
+                    i++;
                 }
-                //  }
                 else {
                     robots = rc.senseNearbyRobots(-1, rc.getTeam());
                     if (rc.getLocation().isWithinDistance(archonLoc, 20)) {
                         tryMove(randomDirection());
                     }
-//                            tryMove(myLocation.directionTo(robots[0].getLocation()));
-//
-//                            if (rc.canFireSingleShot())
-//                                rc.fireSingleShot(rc.getLocation().directionTo(archonLoc));
-                    else if (robots.length > 0)
-                        tryMove(rc.getLocation().directionTo(robots[0].getLocation()));
-                    else tryMove(rc.getLocation().directionTo(archonLoc),60,6);
+                    robots = rc.senseNearbyRobots(-1, rc.getTeam());
+                    if (robots.length > 0)
+                        wander();
                 }
 
                 // Move randomly
