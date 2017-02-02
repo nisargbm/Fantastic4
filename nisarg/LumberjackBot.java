@@ -23,9 +23,11 @@ public class LumberjackBot {
                     rc.broadcast(LUMBERJACK_CHANNEL, rc.readBroadcast(LUMBERJACK_CHANNEL) - 1);
                 dodge();
                 RobotInfo[] bots = rc.senseNearbyRobots(-1,rc.getTeam().opponent());
-                TreeInfo[] trees = rc.senseNearbyTrees();
+                TreeInfo[] trees = rc.senseNearbyTrees(-1, Team.NEUTRAL);
                 if(bots.length>0) {
+
                     for (RobotInfo b : bots) {
+                        dodge();
                         if (b.getTeam() != rc.getTeam() && b.getType()!=RobotType.ARCHON && rc.canStrike()) {
                             rc.strike();
                             Direction chase = rc.getLocation().directionTo(b.getLocation());
